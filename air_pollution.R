@@ -1,6 +1,6 @@
 #Given airpollution data in specdata dir create 
 #function for mean of specfified pollutant #id=1:332
-pollutantmean <- function(directory,pollutant,id) {
+pollutantmean <- function(directory,pollutant,id=1:332) {
 #directory location of file
 filenames=list.files(directory) #list of files with airpollution data
 
@@ -44,8 +44,50 @@ return(DF)
 }
 
 #Input to run for all 332 files and both pollutants and save output to csv files
-#DF.sulfate=pollutantmean("specdata","sulfate",1:332)
-#DF.nitrate=pollutantmean("specdata","nitrate",1:332)
+#DF.mean_sd.sulfate=pollutantmean("specdata","sulfate",1:332)
+#DF.mean_sd.nitrate=pollutantmean("specdata","nitrate",1:332)
 
-#write.csv(DF.sulfate, "df.sulfate.csv")
-#write.csv(DF.nitrate, "df.nitrate.csv")
+#write.csv(DF.mean_sd.sulfate, "df_mean_sd_sulfate.csv")
+#write.csv(DF.mean_sd.nitrate, "df_mean_sd_nitrate.csv")
+
+#function2 output valid readings per location as dataframe
+
+complete <- function(directory,pollutant,id=1:332) {
+
+#directory location of file
+filenames=list.files(directory) #list of files with airpollution data
+obs=NA*id #vector for mean of each datafile
+
+#pollutant sulfate or nitrate
+if(pollutant=="sulfate"){colnum=2} #column of sulfate
+if(pollutant=="nitrate"){colnum=3} #column of nitrate
+
+#id location of monitor
+for (i in id) { #loop thru list and retrieve mean of each location
+
+#read in datafile
+data=read.csv(sprintf("%s/%s",directory,filenames[i]),header=T)[,colnum]
+
+#Calculate complete observations
+obs[i]=length(data[!is.na(data)])
+}
+obs.tot=sum(obs)
+#Calculate mean and sd method 1
+#Method not used because values differ from method 2
+#mean.overall=mean(mean.location,na.rm=T)
+#sd.overall=mean(sd.location,na.rm=T)
+
+#function returns mean of pollutant across all monitor location and overall
+DF=data.frame(id=c(0,id),obs.id=c(obs.tot,obs))
+return(DF)
+
+}
+
+#Input to run for all 332 files and both pollutants and save output to csv files
+DF.complete.sulfate=pollutantmean("specdata","sulfate",1:332)
+DF.complete.nitrate=pollutantmean("specdata","nitrate",1:332)
+
+write.csv(DF.complete.sulfate, "df_complete_sulfate.csv")
+write.csv(DF.complete.nitrate, "df_complete_nitrate.csv")
+
+
