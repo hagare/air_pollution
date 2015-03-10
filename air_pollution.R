@@ -104,7 +104,7 @@ cor.id[i]=cor(data,use="complete.obs")[1,2]
 }
 
 #function returns corr coefficient across all monitor location and overall
-DF=data.frame(id=id,cor.id=cor.id)
+DF=data.frame(id=id[!is.na(cor.id)],cor.id=cor.id[!is.na(cor.id)]) #remove locations below threshold from results
 return(DF)
 
 }
