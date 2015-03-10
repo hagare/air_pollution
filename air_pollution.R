@@ -22,23 +22,14 @@ data=read.csv(sprintf("%s/%s",directory,filenames[i]),header=T)[,colnum]
 
 #merge data into superdata set
 data.all=c(data.all,data)
-
-#Calculate mean and sd method 1
-mean.location[i]=mean(data,na.rm=T) #read.csv(sprintf("%s/%s",directory,filenames[i]))[,colnum],na.rm=T)
-sd.location[i]=sd(data,na.rm=T) #read.csv(sprintf("%s/%s",directory,filenames[i]))[,colnum],na.rm=T)
 }
 
-#Calculate mean and sd method 1
-mean.overall=mean(mean.location,na.rm=T)
-sd.overall=mean(sd.location,na.rm=T)
-
-#Calculate mean and sd method 2
+#Calculate mean and sd 
 mean.all=mean(data.all,na.rm=T)
 sd.all=sd(data.all,na.rm=T)
 
-#function returns mean of pollutant across all monitor location 
-return(c(mean.overall,sd.overall,mean.all,sd.all))
-#return(mean.all)
+#function returns mean and sd of pollutant across all monitor location 
+return(c(mean.all,sd.all))
 }
 
 
