@@ -1,5 +1,5 @@
 #Given airpollution data in specdata dir create 
-#function 1 for mean of specfified pollutant #id=1:332
+## function 1 for mean of specfified pollutant #id=1:332
 pollutantmean <- function(directory="specdata",pollutant,id=1:332) {
 #directory location of file
 filenames=list.files(directory) #list of files with airpollution data
@@ -7,7 +7,7 @@ filenames=list.files(directory) #list of files with airpollution data
 #pollutant sulfate or nitrate
 if(pollutant=="sulfate"){colnum=2} #column of sulfate
 if(pollutant=="nitrate"){colnum=3} #column of nitrate
-data.location=NA*id #vector for mean of each datafile
+data.location=NA*c(1:332) #vector for mean of each datafile
 data.all=NA
 #initializae necessary variables
 mean.location=data.location
@@ -38,7 +38,7 @@ mean.all=mean(data.all,na.rm=T)
 sd.all=sd(data.all,na.rm=T)
 
 #function returns mean of pollutant across all monitor location and overall
-DF=data.frame(id=c(0,id),mean.id=c(mean.all,mean.location),sd.id=c(sd.all,sd.location))
+DF=data.frame(id=c(0,id),mean.id=c(mean.all,mean.location[!is.na(mean.location)]),sd.id=c(sd.all,sd.location[!is.na(mean.location)]))
 return(DF)
 
 }
@@ -50,35 +50,25 @@ return(DF)
 #write.csv(DF.mean_sd.sulfate, "df_mean_sd_sulfate.csv")
 #write.csv(DF.mean_sd.nitrate, "df_mean_sd_nitrate.csv")
 
-# function 2 output valid readings per location as dataframe
+## function 2 output valid readings per location as dataframe
 
-complete <- function(directory="specdata",pollutant,id=1:332) {
+complete <- function(directory="specdata",id=1:332) {
 
 #directory location of file
 filenames=list.files(directory) #list of files with airpollution data
-obs=NA*id #vector for mean of each datafile
-
-#pollutant sulfate or nitrate
-if(pollutant=="sulfate"){colnum=2} #column of sulfate
-if(pollutant=="nitrate"){colnum=3} #column of nitrate
+obs=NA*c(1:332) #vector for mean of each datafile
 
 #id location of monitor
 for (i in id) { #loop thru list and retrieve mean of each location
 
 #read in datafile
-data=read.csv(sprintf("%s/%s",directory,filenames[i]),header=T)[,colnum]
-
+data=read.csv(sprintf("%s/%s",directory,filenames[i]),header=T)[,2:3]
 #Calculate complete observations
-obs[i]=length(data[!is.na(data)])
+obs[i]=dim(data[complete.cases(data),])[1]
 }
-obs.tot=sum(obs)
-#Calculate mean and sd method 1
-#Method not used because values differ from method 2
-#mean.overall=mean(mean.location,na.rm=T)
-#sd.overall=mean(sd.location,na.rm=T)
+obs.tot=sum(obs,na.rm=T)
 
-#function returns mean of pollutant across all monitor location and overall
-DF=data.frame(id=c(0,id),obs.id=c(obs.tot,obs))
+DF=data.frame(id=c(0,id),obs.id=c(obs.tot,obs[!is.na(obs)]))
 return(DF)
 
 }
