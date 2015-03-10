@@ -29,16 +29,23 @@ sd.location[i]=sd(data,na.rm=T) #read.csv(sprintf("%s/%s",directory,filenames[i]
 }
 
 #Calculate mean and sd method 1
-mean.overall=mean(mean.location,na.rm=T)
-sd.overall=mean(sd.location,na.rm=T)
+#Method not used because values differ from method 2
+#mean.overall=mean(mean.location,na.rm=T)
+#sd.overall=mean(sd.location,na.rm=T)
 
 #Calculate mean and sd method 2
 mean.all=mean(data.all,na.rm=T)
 sd.all=sd(data.all,na.rm=T)
 
-#function returns mean of pollutant across all monitor location 
-return(c(mean.overall,sd.overall,mean.all,sd.all))
-#return(mean.all)
+#function returns mean of pollutant across all monitor location and overall
+DF=data.frame(id=c(0,id),mean.id=c(mean.all,mean.location),sd.id=c(sd.all,sd.location))
+return(DF)
+
 }
 
+#Input to run for all 332 files and both pollutants and save output to csv files
+#DF.sulfate=pollutantmean("specdata","sulfate",1:332)
+#DF.nitrate=pollutantmean("specdata","nitrate",1:332)
 
+#write.csv(DF.sulfate, "df.sulfate.csv")
+#write.csv(DF.nitrate, "df.nitrate.csv")
